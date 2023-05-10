@@ -152,9 +152,25 @@ CAPS.Simulation.prototype = {
 
         // 如果显示Caps
         if (this.showCaps) {
+            this.renderer.state.buffers.stencil.setTest( true );
+            this.renderer.state.buffers.stencil.setLocked( true );
 
-            console.log(this.renderer,'我是render')
-            // 启用模板测试
+            this.renderer.state.buffers.stencil.setFunc( gl.ALWAYS, 1, 0xff );
+            this.renderer.state.buffers.stencil.setOp( gl.KEEP, gl.KEEP, gl.INCR );
+            this.renderer.render( this.backStencil, this.camera );
+
+            this.renderer.state.buffers.stencil.setFunc( gl.ALWAYS, 1, 0xff );
+            this.renderer.state.buffers.stencil.setOp( gl.KEEP, gl.KEEP, gl.DECR );
+            this.renderer.render( this.frontStencil, this.camera );
+
+            this.renderer.state.buffers.stencil.setFunc( gl.EQUAL, 1, 0xff );
+            this.renderer.state.buffers.stencil.setOp( gl.KEEP, gl.KEEP, gl.KEEP );
+            this.renderer.render( this.capsScene, this.camera );
+
+
+            this.renderer.state.buffers.stencil.setLocked( false );
+            this.renderer.state.buffers.stencil.setTest( false );
+            //启用模板测试
             // this.renderer.state.setStencilTest(true);
             //
             // // 设置背部模板
